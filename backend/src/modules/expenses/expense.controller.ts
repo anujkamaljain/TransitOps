@@ -22,7 +22,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await getExpenseOrThrow(req.params.id));
+  sendSuccess(res, await getExpenseOrThrow(req.params.id as string));
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -31,11 +31,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const expense = await updateExpense(req.params.id, req.body as UpdateExpenseInput);
+  const expense = await updateExpense(req.params.id as string, req.body as UpdateExpenseInput);
   sendSuccess(res, expense);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await deleteExpense(req.params.id);
+  await deleteExpense(req.params.id as string);
   sendSuccess(res, { message: "Expense deleted" });
 });

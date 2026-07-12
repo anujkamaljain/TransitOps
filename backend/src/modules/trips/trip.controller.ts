@@ -24,7 +24,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await getTripOrThrow(req.params.id));
+  sendSuccess(res, await getTripOrThrow(req.params.id as string));
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -33,24 +33,24 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const trip = await updateTrip(req.params.id, req.body as UpdateTripInput);
+  const trip = await updateTrip(req.params.id as string, req.body as UpdateTripInput);
   sendSuccess(res, trip);
 });
 
 export const dispatch = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await dispatchTrip(req.params.id));
+  sendSuccess(res, await dispatchTrip(req.params.id as string));
 });
 
 export const complete = asyncHandler(async (req: Request, res: Response) => {
-  const trip = await completeTrip(req.params.id, req.body as CompleteTripInput);
+  const trip = await completeTrip(req.params.id as string, req.body as CompleteTripInput);
   sendSuccess(res, trip);
 });
 
 export const cancel = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await cancelTrip(req.params.id));
+  sendSuccess(res, await cancelTrip(req.params.id as string));
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await deleteTrip(req.params.id);
+  await deleteTrip(req.params.id as string);
   sendSuccess(res, { message: "Trip deleted" });
 });

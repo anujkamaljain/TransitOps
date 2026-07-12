@@ -93,10 +93,18 @@ export async function createMaintenance(
   }
 
   const log = await prisma.$transaction(async (tx) => {
-    await tx.vehicle.update({
-      where: { id: vehicle.id },
+    const claim = await tx.vehicle.updateMany({
+      where: {
+        id: vehicle.id,
+        status: { in: [VehicleStatus.AVAILABLE, VehicleStatus.IN_SHOP] },
+      },
       data: { status: VehicleStatus.IN_SHOP },
     });
+    if (claim.count === 0) {
+      throw ApiError.conflict(
+        "Vehicle is no longer available for maintenance; refresh and try again",
+      );
+    }
     return tx.maintenanceLog.create({
       data: {
         ...input,

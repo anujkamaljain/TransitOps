@@ -24,7 +24,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
-  const driver = await getDriverById(req.params.id);
+  const driver = await getDriverById(req.params.id as string);
   sendSuccess(res, driver);
 });
 
@@ -34,17 +34,17 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const driver = await updateDriver(req.params.id, req.body as UpdateDriverInput);
+  const driver = await updateDriver(req.params.id as string, req.body as UpdateDriverInput);
   sendSuccess(res, driver);
 });
 
 export const updateStatus = asyncHandler(async (req: Request, res: Response) => {
   const { status } = req.body as UpdateDriverStatusInput;
-  const driver = await updateDriverStatus(req.params.id, status);
+  const driver = await updateDriverStatus(req.params.id as string, status);
   sendSuccess(res, driver);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await deleteDriver(req.params.id);
+  await deleteDriver(req.params.id as string);
   sendSuccess(res, { message: "Driver deleted" });
 });

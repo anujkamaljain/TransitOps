@@ -33,7 +33,7 @@ export const reports = asyncHandler(async (_req: Request, res: Response) => {
 });
 
 export const vehicleCost = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await getVehicleOperationalCost(req.params.vehicleId));
+  sendSuccess(res, await getVehicleOperationalCost(req.params.vehicleId as string));
 });
 
 export const exportReport = asyncHandler(async (_req: Request, res: Response) => {

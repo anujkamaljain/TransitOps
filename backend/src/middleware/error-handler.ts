@@ -32,7 +32,13 @@ function mapKnownError(error: Prisma.PrismaClientKnownRequestError): {
     return { status: 404, body: { message: "Record not found" } };
   }
   if (error.code === "P2003") {
-    return { status: 409, body: { message: "Related record constraint failed" } };
+    return {
+      status: 409,
+      body: {
+        message:
+          "This record is linked to other data and cannot be deleted while those links exist",
+      },
+    };
   }
   return { status: 400, body: { message: "Database request error" } };
 }

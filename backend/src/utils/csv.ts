@@ -11,11 +11,13 @@ function escapeCell(value: unknown): string {
 
 export function toCsv(
   columns: { key: string; header: string }[],
-  rows: Record<string, unknown>[],
+  rows: readonly object[],
 ): string {
   const headerLine = columns.map((column) => escapeCell(column.header)).join(",");
   const dataLines = rows.map((row) =>
-    columns.map((column) => escapeCell(row[column.key])).join(","),
+    columns
+      .map((column) => escapeCell((row as Record<string, unknown>)[column.key]))
+      .join(","),
   );
   return [headerLine, ...dataLines].join("\r\n");
 }

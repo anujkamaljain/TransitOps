@@ -23,7 +23,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await getMaintenanceOrThrow(req.params.id));
+  sendSuccess(res, await getMaintenanceOrThrow(req.params.id as string));
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -32,15 +32,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const log = await updateMaintenance(req.params.id, req.body as UpdateMaintenanceInput);
+  const log = await updateMaintenance(req.params.id as string, req.body as UpdateMaintenanceInput);
   sendSuccess(res, log);
 });
 
 export const close = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await closeMaintenance(req.params.id));
+  sendSuccess(res, await closeMaintenance(req.params.id as string));
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await deleteMaintenance(req.params.id);
+  await deleteMaintenance(req.params.id as string);
   sendSuccess(res, { message: "Maintenance record deleted" });
 });

@@ -9,6 +9,7 @@ import {
   generateTripCode,
   getDriverOrThrow,
   getVehicleOrThrow,
+  isTripCodeCollision,
   tripInclude,
 } from "./trip.validators.js";
 import type {
@@ -68,11 +69,20 @@ export async function createTrip(input: CreateTripInput, userId?: string) {
     assertDriverAssignable(await getDriverOrThrow(input.driverId));
   }
 
-  const tripCode = await generateTripCode();
-  return prisma.trip.create({
-    data: { ...input, tripCode, createdById: userId ?? null },
-    include: tripInclude,
-  });
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      return await prisma.trip.create({
+        data: { ...input, tripCode: generateTripCode(), createdById: userId ?? null },
+        include: tripInclude,
+      });
+    } catch (error) {
+      if (isTripCodeCollision(error) && attempt < 4) {
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw ApiError.internal("Could not generate a unique trip code");
 }
 
 export async function updateTrip(id: string, input: UpdateTripInput) {

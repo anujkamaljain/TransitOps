@@ -48,14 +48,26 @@ export async function dispatchTrip(id: string) {
   assertCargoWithinCapacity(trip.cargoWeightKg.toNumber(), vehicle.maxLoadCapacityKg);
 
   const result = await prisma.$transaction(async (tx) => {
-    await tx.vehicle.update({
-      where: { id: vehicle.id },
+    const vehicleClaim = await tx.vehicle.updateMany({
+      where: { id: vehicle.id, status: VehicleStatus.AVAILABLE },
       data: { status: VehicleStatus.ON_TRIP },
     });
-    await tx.driver.update({
-      where: { id: driver.id },
+    if (vehicleClaim.count === 0) {
+      throw ApiError.conflict(
+        "This vehicle was just assigned elsewhere and is no longer available",
+        { field: "vehicleId" },
+      );
+    }
+    const driverClaim = await tx.driver.updateMany({
+      where: { id: driver.id, status: DriverStatus.AVAILABLE },
       data: { status: DriverStatus.ON_TRIP },
     });
+    if (driverClaim.count === 0) {
+      throw ApiError.conflict(
+        "This driver was just assigned elsewhere and is no longer available",
+        { field: "driverId" },
+      );
+    }
     return tx.trip.update({
       where: { id },
       data: {

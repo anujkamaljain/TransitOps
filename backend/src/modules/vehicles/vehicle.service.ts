@@ -100,5 +100,15 @@ export async function deleteVehicle(id: string) {
       "Cannot delete a vehicle that is on a trip or in maintenance",
     );
   }
+  const [trips, fuelLogs, maintenanceLogs] = await Promise.all([
+    prisma.trip.count({ where: { vehicleId: id } }),
+    prisma.fuelLog.count({ where: { vehicleId: id } }),
+    prisma.maintenanceLog.count({ where: { vehicleId: id } }),
+  ]);
+  if (trips + fuelLogs + maintenanceLogs > 0) {
+    throw ApiError.conflict(
+      "This vehicle has trip, fuel, or maintenance history. Retire it instead of deleting.",
+    );
+  }
   await prisma.vehicle.delete({ where: { id } });
 }

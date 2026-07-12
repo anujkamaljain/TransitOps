@@ -22,7 +22,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
-  sendSuccess(res, await getFuelLogOrThrow(req.params.id));
+  sendSuccess(res, await getFuelLogOrThrow(req.params.id as string));
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -31,11 +31,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const log = await updateFuelLog(req.params.id, req.body as UpdateFuelLogInput);
+  const log = await updateFuelLog(req.params.id as string, req.body as UpdateFuelLogInput);
   sendSuccess(res, log);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await deleteFuelLog(req.params.id);
+  await deleteFuelLog(req.params.id as string);
   sendSuccess(res, { message: "Fuel log deleted" });
 });

@@ -129,5 +129,11 @@ export async function deleteDriver(id: string) {
   if (driver.status === DriverStatus.ON_TRIP) {
     throw ApiError.conflict("Cannot delete a driver who is on a trip");
   }
+  const tripCount = await prisma.trip.count({ where: { driverId: id } });
+  if (tripCount > 0) {
+    throw ApiError.conflict(
+      "This driver has trips on record. Set them to Off Duty or Suspended instead of deleting.",
+    );
+  }
   await prisma.driver.delete({ where: { id } });
 }

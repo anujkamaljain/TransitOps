@@ -24,7 +24,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {
-  const vehicle = await getVehicleById(req.params.id);
+  const vehicle = await getVehicleById(req.params.id as string);
   sendSuccess(res, vehicle);
 });
 
@@ -34,17 +34,17 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const vehicle = await updateVehicle(req.params.id, req.body as UpdateVehicleInput);
+  const vehicle = await updateVehicle(req.params.id as string, req.body as UpdateVehicleInput);
   sendSuccess(res, vehicle);
 });
 
 export const updateStatus = asyncHandler(async (req: Request, res: Response) => {
   const { status } = req.body as UpdateVehicleStatusInput;
-  const vehicle = await updateVehicleStatus(req.params.id, status);
+  const vehicle = await updateVehicleStatus(req.params.id as string, status);
   sendSuccess(res, vehicle);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await deleteVehicle(req.params.id);
+  await deleteVehicle(req.params.id as string);
   sendSuccess(res, { message: "Vehicle deleted" });
 });

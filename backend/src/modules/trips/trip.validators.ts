@@ -81,13 +81,18 @@ export function assertCargoWithinCapacity(
   }
 }
 
-export async function generateTripCode(): Promise<string> {
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const code = `TRP-${randomBytes(4).toString("hex").toUpperCase()}`;
-    const existing = await prisma.trip.findUnique({ where: { tripCode: code } });
-    if (!existing) {
-      return code;
-    }
+export function generateTripCode(): string {
+  return `TRP-${randomBytes(4).toString("hex").toUpperCase()}`;
+}
+
+export function isTripCodeCollision(error: unknown): boolean {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError)) {
+    return false;
   }
-  throw ApiError.internal("Could not generate a unique trip code");
+  if (error.code !== "P2002") {
+    return false;
+  }
+  const target = error.meta?.["target"];
+  const fields = Array.isArray(target) ? target : [target];
+  return fields.includes("tripCode");
 }
