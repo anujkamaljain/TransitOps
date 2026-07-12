@@ -1,0 +1,35 @@
+Instructions -:
+
+1. Design scalable, well structured, human readable and very modular code.
+2. Model data well, design backend api's with proper validation and checks and leave no chances of attacks and use local databases like  PostgreSQL, MySQL instead of relying on backend as a service platform like Firebase, Supabase and MongoDB Atlas.
+3. Create your project from scratch with minimal use of third party api's to reduce dependency on third party api's. 
+4. Use real-time and dynamic data and don't use static json.
+5. Have really well robust input validation - user errors must be handled gracefully for example if a user enters invalid email, then they must receive a notification that entered email is invalid don't give generic errors cover all edge case and do graceful error handling across whole product. 
+6. Interactive and clean UI. Keep UI clean, interactive, intuitive and very responsive with no inconsistent spacing in any device also make sure UI has very good accessibility means from keyboard as well not only mouse and make sure each page of whole website follows consistent colour themes and layout. 
+7. Have very intuitive navigations means design it like you are designing it for a person who is not relevant to tech who struggles alot in finding pages keep navigations logical that makes sense like keeping navigation to signup page on signin page makes sense but keeping navigation of payments page on signup page it does not make any sense. closely define navigations and make sure your menus have proper and consistent spacing and flow.
+8. Have very good UX.
+9. Make sure give attention to detail to each page and each section.
+10. Each file does not contain more than 150-200 lines keep code very modular
+11. keep file names logical
+12. Dont use emojis instead use professional icons and illustrations
+13. Keep consistent and correct error codes
+14. No name of Cursor Agent should appear in commit
+
+
+
+Our evaluation parameters -:
+
+1. Coding standards 
+2. Logic
+3. Modularity
+4. Frontend Design Colour Scheme
+5. Performance 
+6. Scalability 
+7. Security and Proper validations and check at each level 
+8. Usability
+9. Debugging Sealed
+10. Database Design
+11. Approach to problem statement 
+12. Modular Architecture 
+13. Coding Patterns 
+14. Attention to Detail

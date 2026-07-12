@@ -1,6 +1,9 @@
 import type {
   DriverStatus,
+  ExpenseType,
+  FuelType,
   LicenseCategory,
+  MaintenanceStatus,
   TripStatus,
   VehicleStatus,
   VehicleType,
@@ -57,6 +60,32 @@ export const TRIP_STATUS_TONES: Record<TripStatus, StatusTone> = {
   DISPATCHED: "info",
   COMPLETED: "success",
   CANCELLED: "danger",
+}
+
+export const MAINTENANCE_STATUS_LABELS: Record<MaintenanceStatus, string> = {
+  ACTIVE: "Active",
+  COMPLETED: "Completed",
+}
+
+export const MAINTENANCE_STATUS_TONES: Record<MaintenanceStatus, StatusTone> = {
+  ACTIVE: "warning",
+  COMPLETED: "success",
+}
+
+export const FUEL_TYPE_LABELS: Record<FuelType, string> = {
+  DIESEL: "Diesel",
+  PETROL: "Petrol",
+  CNG: "CNG",
+  ELECTRIC: "Electric",
+}
+
+export const EXPENSE_TYPE_LABELS: Record<ExpenseType, string> = {
+  TOLL: "Toll",
+  PARKING: "Parking",
+  PERMIT: "Permit",
+  FINE: "Fine",
+  MAINTENANCE: "Maintenance",
+  MISC: "Miscellaneous",
 }
 
 export const LICENSE_CATEGORY_LABELS: Record<LicenseCategory, string> = {

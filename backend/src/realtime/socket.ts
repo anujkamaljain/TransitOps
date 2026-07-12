@@ -28,7 +28,7 @@ let io: Server | undefined;
 
 export function initRealtime(httpServer: HttpServer): Server {
   io = new Server(httpServer, {
-    cors: { origin: env.CLIENT_URL, credentials: true },
+    cors: { origin: env.CLIENT_ORIGINS, credentials: true },
   });
 
   io.use((socket, next) => {

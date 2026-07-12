@@ -1,19 +1,28 @@
-import { Fuel } from "lucide-react"
-import { ComingSoon } from "@/components/coming-soon"
 import { PageHeader } from "@/components/page-header"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { FuelPanel } from "@/features/fuel/fuel-panel"
+import { ExpensePanel } from "@/features/expenses/expense-panel"
 
 export function FuelExpensesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
         title="Fuel & Expenses"
-        description="Record fuel logs and expenses, and track operational cost."
+        description="Track fuel consumption and operational costs across the fleet."
       />
-      <ComingSoon
-        icon={Fuel}
-        title="Fuel & expense tracking arrives in Phase 19"
-        note="Fuel-log and expense tables with logging modals and automatic operational-cost totals will render here."
-      />
+
+      <Tabs defaultValue="fuel" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="fuel">Fuel Logs</TabsTrigger>
+          <TabsTrigger value="expenses">Expenses</TabsTrigger>
+        </TabsList>
+        <TabsContent value="fuel">
+          <FuelPanel />
+        </TabsContent>
+        <TabsContent value="expenses">
+          <ExpensePanel />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
