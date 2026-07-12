@@ -1,12 +1,9 @@
 import type { User } from "../../generated/prisma/client.js";
+import { refreshTtlMs } from "../../config/env.js";
 import { prisma } from "../../lib/prisma.js";
 import { ApiError } from "../../utils/api-error.js";
 import { verifyPassword } from "../../utils/password.js";
-import {
-  LOCK_DURATION_MS,
-  MAX_FAILED_ATTEMPTS,
-  REFRESH_TTL_MS,
-} from "./auth.constants.js";
+import { LOCK_DURATION_MS, MAX_FAILED_ATTEMPTS } from "./auth.constants.js";
 import {
   generateRefreshToken,
   hashToken,
@@ -34,7 +31,7 @@ async function issueSession(
     data: {
       tokenHash,
       userId: user.id,
-      expiresAt: new Date(Date.now() + REFRESH_TTL_MS),
+      expiresAt: new Date(Date.now() + refreshTtlMs),
       userAgent: ctx.userAgent,
       ipAddress: ctx.ipAddress,
     },
@@ -68,9 +65,6 @@ export async function loginUser(
   if (!user) {
     throw invalidCredentials;
   }
-  if (!user.isActive) {
-    throw ApiError.forbidden("Your account is disabled. Contact an administrator.");
-  }
   if (user.lockedUntil && user.lockedUntil > new Date()) {
     throw ApiError.forbidden(
       "Account temporarily locked after multiple failed attempts. Try again later.",
@@ -83,11 +77,15 @@ export async function loginUser(
     throw invalidCredentials;
   }
 
-  await prisma.user.update({
+  if (!user.isActive) {
+    throw ApiError.forbidden("Your account is disabled. Contact an administrator.");
+  }
+
+  const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: { failedLoginAttempts: 0, lockedUntil: null, lastLoginAt: new Date() },
   });
-  return issueSession(user, ctx);
+  return issueSession(updatedUser, ctx);
 }
 
 export async function refreshSession(
@@ -101,7 +99,17 @@ export async function refreshSession(
     where: { tokenHash: hashToken(rawToken) },
     include: { user: true },
   });
-  if (!stored || stored.revokedAt || stored.expiresAt < new Date()) {
+  if (!stored) {
+    throw ApiError.unauthorized("Session expired, please sign in again");
+  }
+  if (stored.revokedAt) {
+    await prisma.refreshToken.updateMany({
+      where: { userId: stored.userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+    throw ApiError.unauthorized("Session expired, please sign in again");
+  }
+  if (stored.expiresAt < new Date()) {
     throw ApiError.unauthorized("Session expired, please sign in again");
   }
   if (!stored.user.isActive) {
@@ -126,7 +134,7 @@ export async function logoutSession(rawToken: string | undefined): Promise<void>
 
 export async function getCurrentUser(userId: string): Promise<PublicUser> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) {
+  if (!user || !user.isActive) {
     throw ApiError.unauthorized();
   }
   return toPublicUser(user);

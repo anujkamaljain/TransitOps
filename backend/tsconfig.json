@@ -6,10 +6,6 @@
     "lib": ["ES2022"],
     "rootDir": "src",
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

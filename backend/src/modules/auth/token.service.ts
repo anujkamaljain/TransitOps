@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.js";
-import type { UserRole } from "../../generated/prisma/enums.js";
+import { UserRole } from "../../generated/prisma/enums.js";
 
 export interface AccessTokenPayload {
   sub: string;
@@ -24,7 +24,18 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
   if (typeof decoded === "string" || !decoded.sub) {
     throw new Error("Invalid access token");
   }
-  return { sub: String(decoded.sub), role: decoded.role as UserRole };
+  const role = decoded.role;
+  if (!isUserRole(role)) {
+    throw new Error("Invalid access token");
+  }
+  return { sub: String(decoded.sub), role };
+}
+
+function isUserRole(value: unknown): value is UserRole {
+  return (
+    typeof value === "string" &&
+    (Object.values(UserRole) as string[]).includes(value)
+  );
 }
 
 export function generateRefreshToken(): { token: string; tokenHash: string } {

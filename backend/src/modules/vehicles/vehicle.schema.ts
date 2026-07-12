@@ -20,6 +20,13 @@ export const createVehicleSchema = z.object({
 
 export const updateVehicleSchema = z
   .object({
+    registrationNumber: z
+      .string()
+      .trim()
+      .min(1)
+      .max(20)
+      .transform((value) => value.toUpperCase())
+      .optional(),
     name: z.string().trim().min(1).max(100).optional(),
     type: z.enum(VehicleType).optional(),
     maxLoadCapacityKg: z.coerce.number().positive().optional(),

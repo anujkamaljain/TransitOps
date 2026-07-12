@@ -69,6 +69,9 @@ export async function createVehicle(input: CreateVehicleInput) {
 
 export async function updateVehicle(id: string, input: UpdateVehicleInput) {
   await getVehicleById(id);
+  if (input.registrationNumber) {
+    await ensureUniqueRegistration(input.registrationNumber, id);
+  }
   return prisma.vehicle.update({ where: { id }, data: input });
 }
 

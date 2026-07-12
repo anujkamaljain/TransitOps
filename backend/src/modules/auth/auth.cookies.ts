@@ -1,6 +1,5 @@
 import type { CookieOptions, Response } from "express";
-import { isProduction } from "../../config/env.js";
-import { ACCESS_TTL_MS, REFRESH_TTL_MS } from "./auth.constants.js";
+import { accessTtlMs, isProduction, refreshTtlMs } from "../../config/env.js";
 
 export const ACCESS_COOKIE = "transitops_access";
 export const REFRESH_COOKIE = "transitops_refresh";
@@ -23,12 +22,12 @@ export function setAuthCookies(
   res.cookie(ACCESS_COOKIE, accessToken, {
     ...baseOptions(),
     path: "/",
-    maxAge: ACCESS_TTL_MS,
+    maxAge: accessTtlMs,
   });
   res.cookie(REFRESH_COOKIE, refreshToken, {
     ...baseOptions(),
     path: REFRESH_PATH,
-    maxAge: REFRESH_TTL_MS,
+    maxAge: refreshTtlMs,
   });
 }
 
