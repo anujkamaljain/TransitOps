@@ -1,0 +1,17 @@
+node_modules
+
+# Keep environment variables out of version control
+.env
+.env.*
+!.env.example
+
+# Build output
+dist
+
+# Prisma generated client
+/generated/prisma
+
+# Logs
+logs
+*.log
+npm-debug.log*
