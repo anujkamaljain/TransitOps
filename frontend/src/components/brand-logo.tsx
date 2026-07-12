@@ -15,7 +15,7 @@ export function BrandLogo({
 }: BrandLogoProps) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-primary to-amber-600 shadow-sm ring-1 ring-primary/30">
+      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-linear-to-br from-primary to-amber-600 shadow-sm ring-1 ring-primary/30">
         <span className="grid size-4 grid-cols-2 grid-rows-2 overflow-hidden rounded-[3px]">
           <span className="bg-primary-foreground/90" />
           <span className="bg-primary-foreground/30" />

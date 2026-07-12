@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import { bootstrapSession, login, logout, type LoginPayload } from "@/lib/api/auth"
+import { disconnectSocket } from "@/lib/api/socket"
 import { queryClient } from "@/lib/query-client"
 import type { User } from "@/types/auth"
 import { AuthContext, type AuthStatus } from "@/providers/auth-context"
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUser(null)
       setStatus("unauthenticated")
+      disconnectSocket()
       queryClient.clear()
     }
   }, [])
