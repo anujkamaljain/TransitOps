@@ -1,0 +1,10 @@
+model OrgSettings {
+  id           String   @id @default(cuid())
+  depotName    String   @default("TransitOps Depot")
+  currency     String   @default("INR")
+  distanceUnit String   @default("km")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("org_settings")
+}

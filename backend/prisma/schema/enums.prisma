@@ -1,0 +1,74 @@
+enum UserRole {
+  FLEET_MANAGER
+  DISPATCHER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
+enum VehicleType {
+  VAN
+  TRUCK
+  MINI
+  BUS
+  TRAILER
+  CAR
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  IN_SHOP
+  RETIRED
+}
+
+enum DriverStatus {
+  AVAILABLE
+  ON_TRIP
+  OFF_DUTY
+  SUSPENDED
+}
+
+enum LicenseCategory {
+  LMV
+  HMV
+  MCWG
+  PSV
+  TRANS
+}
+
+enum TripStatus {
+  DRAFT
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenanceStatus {
+  ACTIVE
+  COMPLETED
+}
+
+enum FuelType {
+  DIESEL
+  PETROL
+  CNG
+  ELECTRIC
+}
+
+enum ExpenseType {
+  TOLL
+  PARKING
+  PERMIT
+  FINE
+  MAINTENANCE
+  MISC
+}
+
+enum DocumentType {
+  REGISTRATION
+  INSURANCE
+  POLLUTION
+  FITNESS
+  PERMIT
+  OTHER
+}
