@@ -1,17 +1,35 @@
+import { lazy } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 import { LoginPage } from "@/features/auth/login-page"
-import { DashboardPage } from "@/pages/dashboard-page"
-import { VehiclesPage } from "@/pages/vehicles-page"
-import { DriversPage } from "@/pages/drivers-page"
-import { TripsPage } from "@/pages/trips-page"
-import { MaintenancePage } from "@/pages/maintenance-page"
-import { FuelExpensesPage } from "@/pages/fuel-expenses-page"
-import { ReportsPage } from "@/pages/reports-page"
-import { SettingsPage } from "@/pages/settings-page"
 import { NotFoundPage } from "@/pages/not-found-page"
 import { ProtectedRoute } from "@/routes/protected-route"
 import { PublicOnlyRoute } from "@/routes/public-only-route"
 import { RequireModule } from "@/routes/require-module"
+
+const DashboardPage = lazy(() =>
+  import("@/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
+)
+const VehiclesPage = lazy(() =>
+  import("@/pages/vehicles-page").then((m) => ({ default: m.VehiclesPage })),
+)
+const DriversPage = lazy(() =>
+  import("@/pages/drivers-page").then((m) => ({ default: m.DriversPage })),
+)
+const TripsPage = lazy(() =>
+  import("@/pages/trips-page").then((m) => ({ default: m.TripsPage })),
+)
+const MaintenancePage = lazy(() =>
+  import("@/pages/maintenance-page").then((m) => ({ default: m.MaintenancePage })),
+)
+const FuelExpensesPage = lazy(() =>
+  import("@/pages/fuel-expenses-page").then((m) => ({ default: m.FuelExpensesPage })),
+)
+const ReportsPage = lazy(() =>
+  import("@/pages/reports-page").then((m) => ({ default: m.ReportsPage })),
+)
+const SettingsPage = lazy(() =>
+  import("@/pages/settings-page").then((m) => ({ default: m.SettingsPage })),
+)
 
 export function AppRouter() {
   return (
