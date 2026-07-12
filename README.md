@@ -259,4 +259,4 @@ All routes are under `/api`:
 
 ## License
 
-MIT
+MIT.
