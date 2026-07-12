@@ -4,6 +4,7 @@ import {
   VehicleStatus,
 } from "../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
+import { AppEvent, publish } from "../../realtime/event-bus.js";
 import { ApiError } from "../../utils/api-error.js";
 import type {
   CreateMaintenanceInput,
@@ -91,7 +92,7 @@ export async function createMaintenance(
     throw ApiError.conflict("Retired vehicles cannot be sent for maintenance");
   }
 
-  return prisma.$transaction(async (tx) => {
+  const log = await prisma.$transaction(async (tx) => {
     await tx.vehicle.update({
       where: { id: vehicle.id },
       data: { status: VehicleStatus.IN_SHOP },
@@ -105,6 +106,12 @@ export async function createMaintenance(
       include: maintenanceInclude,
     });
   });
+  publish(AppEvent.MaintenanceUpdated, {
+    maintenanceId: log.id,
+    vehicleId: log.vehicleId,
+    status: log.status,
+  });
+  return log;
 }
 
 export async function updateMaintenance(id: string, input: UpdateMaintenanceInput) {
@@ -124,7 +131,7 @@ export async function closeMaintenance(id: string) {
   if (log.status !== MaintenanceStatus.ACTIVE) {
     throw ApiError.conflict("This maintenance record is already closed");
   }
-  return prisma.$transaction(async (tx) => {
+  const closed = await prisma.$transaction(async (tx) => {
     await tx.maintenanceLog.update({
       where: { id },
       data: { status: MaintenanceStatus.COMPLETED, closedAt: new Date() },
@@ -135,6 +142,12 @@ export async function closeMaintenance(id: string) {
       include: maintenanceInclude,
     });
   });
+  publish(AppEvent.MaintenanceUpdated, {
+    maintenanceId: closed.id,
+    vehicleId: closed.vehicleId,
+    status: closed.status,
+  });
+  return closed;
 }
 
 export async function deleteMaintenance(id: string) {
@@ -144,5 +157,10 @@ export async function deleteMaintenance(id: string) {
     if (log.status === MaintenanceStatus.ACTIVE) {
       await restoreVehicleIfIdle(tx, log.vehicleId);
     }
+  });
+  publish(AppEvent.MaintenanceUpdated, {
+    maintenanceId: log.id,
+    vehicleId: log.vehicleId,
+    status: "DELETED",
   });
 }

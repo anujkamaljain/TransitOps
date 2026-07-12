@@ -5,6 +5,7 @@ import {
   VehicleStatus,
 } from "../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
+import { AppEvent, publish } from "../../realtime/event-bus.js";
 import { ApiError } from "../../utils/api-error.js";
 import {
   assertCargoWithinCapacity,
@@ -16,6 +17,18 @@ import {
 } from "./trip.validators.js";
 import { getTripOrThrow } from "./trip.service.js";
 import type { CompleteTripInput } from "./trip.schema.js";
+
+type TripResult = Awaited<ReturnType<typeof getTripOrThrow>>;
+
+function emitTripUpdated(trip: TripResult): TripResult {
+  publish(AppEvent.TripUpdated, {
+    tripId: trip.id,
+    status: trip.status,
+    vehicleId: trip.vehicleId,
+    driverId: trip.driverId,
+  });
+  return trip;
+}
 
 export async function dispatchTrip(id: string) {
   const trip = await getTripOrThrow(id);
@@ -34,7 +47,7 @@ export async function dispatchTrip(id: string) {
   assertDriverAssignable(driver);
   assertCargoWithinCapacity(trip.cargoWeightKg.toNumber(), vehicle.maxLoadCapacityKg);
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     await tx.vehicle.update({
       where: { id: vehicle.id },
       data: { status: VehicleStatus.ON_TRIP },
@@ -53,6 +66,7 @@ export async function dispatchTrip(id: string) {
       include: tripInclude,
     });
   });
+  return emitTripUpdated(result);
 }
 
 export async function completeTrip(id: string, input: CompleteTripInput) {
@@ -82,7 +96,7 @@ export async function completeTrip(id: string, input: CompleteTripInput) {
     ...(input.revenue !== undefined ? { revenue: input.revenue } : {}),
   };
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     if (trip.vehicleId) {
       await tx.vehicle.update({
         where: { id: trip.vehicleId },
@@ -97,6 +111,7 @@ export async function completeTrip(id: string, input: CompleteTripInput) {
     }
     return tx.trip.update({ where: { id }, data, include: tripInclude });
   });
+  return emitTripUpdated(result);
 }
 
 export async function cancelTrip(id: string) {
@@ -109,7 +124,7 @@ export async function cancelTrip(id: string) {
   }
 
   const wasDispatched = trip.status === TripStatus.DISPATCHED;
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     if (wasDispatched && trip.vehicleId) {
       await tx.vehicle.update({
         where: { id: trip.vehicleId },
@@ -128,4 +143,5 @@ export async function cancelTrip(id: string) {
       include: tripInclude,
     });
   });
+  return emitTripUpdated(result);
 }
